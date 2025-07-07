@@ -49,7 +49,7 @@
             //         WC()->session->__unset('accessories_discount_applied');
             //     }
             // }
-            
+
             //this one work when accessories product in cart total accessories product value ablove or equal to 2000
             public function apply_discount($cart){
                 if(is_admin() && !defined('DOING_AJAX')){
@@ -57,24 +57,27 @@
                 }
                 $accessories_subtotal = 0;
                 $has_accessories = false;
+
                 foreach($cart->get_cart() as $cart_item){
                     $product_id = $cart_item['product_id'];
-                    $terms = get_the_terms($product_id, 'product_cat, true);');
+                    $terms = get_the_terms($product_id, 'product_cat', true);
+
                     if($terms && !is_wp_error($terms)){
-                        foreach($terms as $terms){
-                            if(strtotalower($term->name) === 'accessories'){
+                        foreach($terms as $term){
+                            if(strtolower($term->name) === 'accessories'){
                                 $has_accessories = true;
-                                $accessories_subtotal += $cart_item['Line_total'];
+                                $accessories_subtotal += $cart_item['line_subtotal'];
+                                break;
                             }
                         }
                     }
                 }
+
                 if($has_accessories && $accessories_subtotal >= 2000){
                     $discount = $accessories_subtotal * 0.15;
                     $cart->add_fee($this->discount_lable, -$discount, false);
                     WC()->session->set('accessories_discount_applied', true);
-                }
-                else{
+                } else {
                     WC()->session->__unset('accessories_discount_applied');
                 }
             }
